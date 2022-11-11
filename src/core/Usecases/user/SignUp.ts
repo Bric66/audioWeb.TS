@@ -1,0 +1,44 @@
+import {UseCase} from "../Usecase";
+import {User} from "../../Entities/User";
+import {UserRepository} from "../../repositories/UserRepository";
+import {IdGateway} from "../../gateways/IdGateway";
+import {PasswordGateway} from "../../gateways/PasswordGateway";
+
+export type UserInput = {
+    userName: string;
+    connexionType: string;
+    email: string;
+    password: string;
+    picture: string;
+}
+
+export class SignUp implements UseCase<UserInput, User> {
+
+    constructor(private readonly userRepository: UserRepository,
+                private readonly idGateway: IdGateway,
+                private readonly passwordGateway: PasswordGateway) {
+    }
+
+    execute(input: UserInput): User {
+        const userExists = this.userRepository.getByEmail(input.email.toLowerCase().trim());
+        if (userExists) {
+            throw new Error ('user already exists')
+        }
+        const id=this.idGateway.generate();
+        const hash=this.passwordGateway.encrypt(input.password)
+        const user = User.create({
+            id: id,
+            userName: input.userName,
+            connexionType: input.connexionType,
+            email: input.email,
+            password: hash,
+            picture: input.picture,
+
+        })
+
+        this.userRepository.saveByEmail (user);
+
+        return user
+
+
+}}

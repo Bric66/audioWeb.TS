@@ -1,0 +1,24 @@
+{
+  "name": "mybankaccount",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npx ts-node src/index",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "npx tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.17.14",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "typescript": "^4.8.4",
+    "uuidv4": "^6.2.13"
+  },
+  "devDependencies": {
+    "jest": "^29.3.1",
+    "ts-node": "^10.9.1"
+  }
+}
