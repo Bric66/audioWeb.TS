@@ -1,10 +1,12 @@
 import "dotenv/config";
+const port=+process.env.PORT_KEY;
+
 import express from "express";
 import {userRouter} from "./api/routes/user";
 import {organisationRouter} from "./api/routes/organisation";
 
 const app=express();
-const port=3003;
+
 
 app.use(express.json());
 

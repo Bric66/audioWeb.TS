@@ -2,7 +2,7 @@ import {UserProperties} from "./User";
 
 export type OrganisationProperties = {
     id: string;
-    userId:string
+    userId: string
     name: string;
     statut: string;
     raisonSociale: string;
@@ -17,19 +17,18 @@ export type OrganisationProperties = {
     emoji: string;
 }
 
-
 export class Organisation {
     props: OrganisationProperties;
     userProperties: UserProperties;
 
     constructor(props: OrganisationProperties
-                 ) {
+    ) {
         this.props = props;
     }
 
     static create(props: {
         id: string;
-        userId:string
+        userId: string
         name: string;
         statut: string;
         raisonSociale: string;
@@ -40,7 +39,6 @@ export class Organisation {
         country: string;
         tva: string;
         emoji: string;
-
     }) {
         return new Organisation({
             id: props.id,

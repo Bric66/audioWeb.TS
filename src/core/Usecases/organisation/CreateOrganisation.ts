@@ -1,12 +1,10 @@
-
-
-import {OrganisationRepository} from "../../repositories/OrganisationRepository";
 import {UseCase} from "../Usecase";
 import {IdGateway} from "../../gateways/IdGateway";
-import {Organisation} from "../../Entities/Organisation";
+import {User} from "../../Entities/User";
+import {UserRepository} from "../../repositories/UserRepository";
 
 export type OrganisationInput = {
-    userId:string
+    userId: string
     name: string;
     statut: string;
     raisonSociale: string;
@@ -17,36 +15,34 @@ export type OrganisationInput = {
     country: string;
     tva: string;
     emoji: string;
-
 }
 
-export class CreateOrganisation implements UseCase<OrganisationInput, Organisation> {
+export class CreateOrganisation implements UseCase<OrganisationInput, User> {
 
-    constructor(private readonly organisationRepository: OrganisationRepository,
+    constructor(private readonly userRepository: UserRepository,
                 private readonly idGateway: IdGateway) {
     }
 
-    execute(input:OrganisationInput): Organisation {
-       const organisationExists = this.organisationRepository.getByUserId(input.userId);
-        if (organisationExists) {
-            throw new Error ('organisation already exists')
-        }
-        const id=this.idGateway.generate();
-        const organisation=Organisation.create({
-            id:id,
-            userId:input.userId,
-            name:input.name,
-            statut:input.statut,
-            raisonSociale:input.raisonSociale,
-            siret:input.siret,
-            street:input.street,
-            city:input.city,
-            bp:input.bp,
+    execute(input: OrganisationInput): User {
+        const user = this.userRepository.getById(input.userId);
+        const id = this.idGateway.generate();
+        user.linkOrganisation({
+            id: id,
+            userId: input.userId,
+            name: input.name,
+            statut: input.statut,
+            raisonSociale: input.raisonSociale,
+            siret: input.siret,
+            street: input.street,
+            city: input.city,
+            bp: input.bp,
             country: input.country,
-            tva:input.tva,
-            emoji:input.emoji,
+            tva: input.tva,
+            emoji: input.emoji,
+            created: new Date(),
+            updated: null,
         })
-this.organisationRepository.save(organisation)
-        return (organisation)
+        this.userRepository.save(user);
+        return user;
     }
 }

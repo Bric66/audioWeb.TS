@@ -22,10 +22,10 @@ export class SignUp implements UseCase<UserInput, User> {
     execute(input: UserInput): User {
         const userExists = this.userRepository.getByEmail(input.email.toLowerCase().trim());
         if (userExists) {
-            throw new Error ('user already exists')
+            throw new Error('user already exists')
         }
-        const id=this.idGateway.generate();
-        const hash=this.passwordGateway.encrypt(input.password)
+        const id = this.idGateway.generate();
+        const hash = this.passwordGateway.encrypt(input.password)
         const user = User.create({
             id: id,
             userName: input.userName,
@@ -33,12 +33,9 @@ export class SignUp implements UseCase<UserInput, User> {
             email: input.email,
             password: hash,
             picture: input.picture,
-
         })
 
-        this.userRepository.saveByEmail (user);
-
+        this.userRepository.save(user);
         return user
-
-
-}}
+    }
+}

@@ -1,11 +1,9 @@
-import { User } from "../Entities/User";
+import {User} from "../Entities/User";
 
-export interface UserRepository{
-    saveByEmail(user: User):void;
+export interface UserRepository {
+    save(user: User): void;
 
+    getByEmail(email: string): User;
 
-
-    getByEmail(email:string):User;
-
-    getById(id:string):User;
+    getById(id: string): User;
 }

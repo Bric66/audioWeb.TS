@@ -1,26 +1,26 @@
 import express from "express";
+
+const userRouter = express.Router();
+
 import jwt from "jsonwebtoken";
+
 const secretKey = process.env.SECRET_KEY;
+
 import {InMemoryUserRepository} from "../../adapters/repositories/InMemoryUserRepository";
 import {SignUp} from "../../core/Usecases/user/SignUp";
 import {V4IdGateway} from "../../adapters/gateways/V4IdGateway";
 import {BcryptGateway} from "../../adapters/gateways/BcryptGateway";
 import {SignIn} from "../../core/Usecases/user/SignIn";
 import {authorization} from "../middlewares/JwtAuthorizationMiddleware";
-
 import {AuthentifiedRequest} from "../types/AuthentifiedRequest";
 import {UpdateUser} from "../../core/Usecases/user/UpdateUser";
-
-const userRouter = express.Router();
-//const middlewareRouter= express.Router();
 
 const inMemoryUserRepository = new InMemoryUserRepository();
 const V4idGateway = new V4IdGateway();
 const bcryptGateway = new BcryptGateway();
 const signUp = new SignUp(inMemoryUserRepository, V4idGateway, bcryptGateway);
 const signIn = new SignIn(inMemoryUserRepository, bcryptGateway);
-const updateUser= new UpdateUser(inMemoryUserRepository,bcryptGateway)
-
+const updateUser = new UpdateUser(inMemoryUserRepository, bcryptGateway)
 
 userRouter.post("/signup", (req, res) => {
     try {
@@ -33,7 +33,7 @@ userRouter.post("/signup", (req, res) => {
         };
 
         const user = signUp.execute(body);
-;
+
         return res.status(200).send({
             id: user.props.id,
             userName: user.props.userName,
@@ -41,7 +41,7 @@ userRouter.post("/signup", (req, res) => {
             email: user.props.email,
             created: user.props.created,
             updated: user.props.updated,
-            picture: user.props.picture
+            picture: user.props.picture,
         });
     } catch (err) {
         return res.status(400).send({
@@ -67,7 +67,6 @@ userRouter.post("/signin", (req, res) => {
             },
             secretKey
         );
-
         return res.status(200).send({
             id: user.props.id,
             userName: user.props.userName,
@@ -76,7 +75,8 @@ userRouter.post("/signin", (req, res) => {
             created: user.props.created,
             updated: user.props.updated,
             picture: user.props.picture,
-            accesskey:accessKey,
+            organisation: user.props.organisation,
+            accesskey: accessKey,
         });
     } catch (err) {
         return res.status(400).send({
@@ -96,16 +96,15 @@ userRouter.patch("/update", (req: AuthentifiedRequest, res) => {
             password: req.body.password,
             picture: req.body.picture,
         };
-
         const updatedUser = updateUser.execute({
             userName: body.userName,
             connexionType: body.connexionType,
             email: body.email,
             password: body.password,
             picture: body.picture,
-            accessToken: req.user.email
+            updated: new Date(),
+            accessToken: req.user.id
         })
-
         return res.status(200).send({
             id: updatedUser.props.id,
             userName: updatedUser.props.userName,
@@ -113,9 +112,10 @@ userRouter.patch("/update", (req: AuthentifiedRequest, res) => {
             email: updatedUser.props.email,
             created: updatedUser.props.created,
             updated: updatedUser.props.updated,
-            picture: updatedUser.props.picture
+            picture: updatedUser.props.picture,
+            organisation: updatedUser.props.organisation,
         });
-    }catch (err) {
+    } catch (err) {
         return res.status(400).send({
             message: err.message,
         })
