@@ -27,7 +27,10 @@ export class CreateOrganisation implements UseCase<OrganisationInput, Organisati
     }
 
     execute(input:OrganisationInput): Organisation {
-       // const organisationExists = this.organisationRepository.getByUserId(input);
+       const organisationExists = this.organisationRepository.getByUserId(input.userId);
+        if (organisationExists) {
+            throw new Error ('organisation already exists')
+        }
         const id=this.idGateway.generate();
         const organisation=Organisation.create({
             id:id,

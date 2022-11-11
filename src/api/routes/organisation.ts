@@ -12,8 +12,8 @@ const inMemoryOrganisationRepository = new InMemoryOrganisationRepository()
 const createOrganisation = new CreateOrganisation(inMemoryOrganisationRepository, V4idGateway)
 
 
-organisationRouter.post("/", (req: AuthentifiedRequest, res) => {
-
+organisationRouter.post("/create", (req: AuthentifiedRequest, res) => {
+try {
     const body = {
         name: req.body.name,
         statut: req.body.statut,
@@ -40,8 +40,12 @@ organisationRouter.post("/", (req: AuthentifiedRequest, res) => {
         tva: body.tva,
         emoji: body.emoji,
     })
-return res.status(200).send(organisation.props);
-
+    return res.status(200).send(organisation.props);
+}catch (err) {
+    return res.status(400).send({
+        message: err.message,
+    })
+}
 });
 
 

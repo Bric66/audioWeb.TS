@@ -59,6 +59,25 @@ export class User {
         this.props.picture = props.picture
     }
 
+/*linkOrganisation(props: {
+    id: string;
+    userId:string
+    name: string;
+    statut: string;
+    raisonSociale: string;
+    siret: string;
+    street: string;
+    city: string;
+    bp: string;
+    country: string;
+    tva: string;
+    created: Date;
+    updated: Date;
+    emoji: string;
+}) {
+
+}*/
+
 
 }
 

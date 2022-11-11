@@ -5,7 +5,7 @@ const dbOrganisation = new Map<string,Organisation>();
 
 export class InMemoryOrganisationRepository implements OrganisationRepository{
     save(organisation: Organisation) :void{
-        dbOrganisation.set(organisation.props.id,organisation);
+        dbOrganisation.set(organisation.props.userId,organisation);
     }
 
     getByUserId(id:string):Organisation {
