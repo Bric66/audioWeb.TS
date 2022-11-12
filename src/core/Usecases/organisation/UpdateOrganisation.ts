@@ -1,12 +1,11 @@
 import {UseCase} from "../Usecase";
-import {IdGateway} from "../../gateways/IdGateway";
 import {User} from "../../Entities/User";
 import {UserRepository} from "../../repositories/UserRepository";
-import {OrganisationRepository} from "../../repositories/OrganisationRepository";
+import {PasswordGateway} from "../../gateways/PasswordGateway";
 import {Organisation} from "../../Entities/Organisation";
+import {OrganisationRepository} from "../../repositories/OrganisationRepository";
 
-export type OrganisationInput = {
-    userId: string
+export type UserInput = {
     name: string;
     statut: string;
     raisonSociale: string;
@@ -17,23 +16,20 @@ export type OrganisationInput = {
     country: string;
     tva: string;
     emoji: string;
+    accessToken: string;
 }
 
-export class CreateOrganisation implements UseCase<OrganisationInput, Organisation> {
+export class UpdateOrganisation implements UseCase<UserInput, Organisation> {
 
-    constructor(private readonly organisationRepository: OrganisationRepository,
-                private readonly idGateway: IdGateway) {
+    constructor(private readonly organisationRepository: OrganisationRepository) {
     }
 
-    execute(input: OrganisationInput): Organisation {
-        const organisationExists = this.organisationRepository.getByUserId(input.userId);
-        if (organisationExists) {
-            throw new Error('organisation already exists')
+    execute(input: UserInput): Organisation {
+        const organisation = this.organisationRepository.getByUserId(input.accessToken)
+        if (!organisation) {
+            throw new Error("organisation doesn't exist")
         }
-        const id = this.idGateway.generate();
-        const organisation = Organisation.create({
-            id: id,
-            userId: input.userId,
+        organisation.update({
             name: input.name,
             statut: input.statut,
             raisonSociale: input.raisonSociale,

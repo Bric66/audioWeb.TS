@@ -15,6 +15,7 @@ export type OrganisationProperties = {
     created: Date;
     updated: Date;
     emoji: string;
+    invite: any[];
 }
 
 export class Organisation {
@@ -55,6 +56,39 @@ export class Organisation {
             created: new Date(),
             updated: null,
             emoji: props.emoji,
+            invite: []
         })
     }
+
+    update(props: {
+        name: string;
+        statut: string;
+        raisonSociale: string;
+        siret: string;
+        street: string;
+        city: string;
+        bp: string;
+        country: string;
+        tva: string;
+        emoji: string;
+    }) {
+        this.props.name = props.name
+        this.props.statut = props.statut
+        this.props.raisonSociale = props.raisonSociale
+        this.props.siret = props.siret
+        this.props.street = props.street
+        this.props.city = props.city
+        this.props.bp = props.bp
+        this.props.country = props.country
+        this.props.tva = props.tva
+        this.props.updated = new Date()
+        this.props.emoji = props.emoji
+    }
+
+    /*(props:{
+        invite: string
+    }){
+        this.props.invite = props.invite
+    }
+*/
 }
