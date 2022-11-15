@@ -16,7 +16,7 @@ export type UserInput = {
     country: string;
     tva: string;
     emoji: string;
-    accessToken: string;
+    userId: string;
 }
 
 export class UpdateOrganisation implements UseCase<UserInput, Organisation> {
@@ -25,7 +25,7 @@ export class UpdateOrganisation implements UseCase<UserInput, Organisation> {
     }
 
     execute(input: UserInput): Organisation {
-        const organisation = this.organisationRepository.getByUserId(input.accessToken)
+        const organisation = this.organisationRepository.getByUserId(input.userId)
         if (!organisation) {
             throw new Error("organisation doesn't exist")
         }

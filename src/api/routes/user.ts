@@ -40,7 +40,6 @@ userRouter.post("/signup", (req, res) => {
             connexionType: user.props.connexionType,
             email: user.props.email,
             created: user.props.created,
-            updated: user.props.updated,
             picture: user.props.picture,
         });
     } catch (err) {
@@ -103,7 +102,7 @@ userRouter.patch("/update", (req: AuthentifiedRequest, res) => {
             password: body.password,
             picture: body.picture,
             updated: new Date(),
-            accessToken: req.user.id
+            userId: req.user.id
         })
         return res.status(200).send({
             id: updatedUser.props.id,

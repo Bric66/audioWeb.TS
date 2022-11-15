@@ -82,7 +82,7 @@ organisationRouter.patch("/", (req: AuthentifiedRequest, res) => {
             country: body.country,
             tva: body.tva,
             emoji: body.emoji,
-            accessToken: req.user.id
+            userId: req.user.id
         })
         return res.status(200).send(organisation.props);
     } catch (err) {
@@ -101,7 +101,7 @@ organisationRouter.post("/sendInvitation", async (req: AuthentifiedRequest, res)
         await sendInvitation.execute({
             email: body.email,
             name: body.name,
-            accessToken: req.user.id
+            userId: req.user.id
         })
 
         return res.status(200).send({

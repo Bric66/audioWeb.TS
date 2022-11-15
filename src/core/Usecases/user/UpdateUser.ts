@@ -10,7 +10,7 @@ export type UserInput = {
     password: string,
     picture: string,
     updated: Date,
-    accessToken: string
+    userId: string
 }
 
 export class UpdateUser implements UseCase<UserInput, User> {
@@ -20,7 +20,7 @@ export class UpdateUser implements UseCase<UserInput, User> {
     }
 
     execute(input: UserInput): User {
-        const user = this.userRepository.getById(input.accessToken);
+        const user = this.userRepository.getById(input.userId);
         user.update({
             userName: input.userName,
             connexionType: input.connexionType,
