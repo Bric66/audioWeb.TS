@@ -25,8 +25,8 @@ export class CreateOrganisation implements UseCase<OrganisationInput, Organisati
                 private readonly idGateway: IdGateway) {
     }
 
-    execute(input: OrganisationInput): Organisation {
-        const organisationExists = this.organisationRepository.getByUserId(input.userId);
+    async execute(input: OrganisationInput): Promise<Organisation> {
+        const organisationExists = await this.organisationRepository.getByUserId(input.userId);
         if (organisationExists) {
             throw new Error('organisation already exists')
         }
@@ -45,7 +45,7 @@ export class CreateOrganisation implements UseCase<OrganisationInput, Organisati
             tva: input.tva,
             emoji: input.emoji,
         })
-        this.organisationRepository.save(organisation);
+        await this.organisationRepository.create(organisation);
         return organisation;
     }
 }

@@ -1,9 +1,17 @@
 import { Organisation } from "../Entities/Organisation";
+import {UserUpdatedInput} from "../Usecases/user/UpdateUser";
+import {User} from "../Entities/User";
+import {OrganisationUpdatedInput} from "../Usecases/organisation/UpdateOrganisation";
+import {InviteInput} from "../Usecases/organisation/SendInvitation";
 
 export interface OrganisationRepository{
-    save(user: Organisation):void;
+    create(organisation: Organisation):Promise<Organisation>;
 
-    getByUserId(id:string):Organisation;
+    getByUserId(userId:string):Promise<Organisation>;
 
-    invitationExists(userId:string,email:string):boolean;
+    update(organisationInput: OrganisationUpdatedInput): Promise<Organisation>;
+
+    invitationExists(userId:string,email:string):Promise<boolean>;
+
+    updateInvitationsSent(organisationInput: InviteInput): Promise<Organisation>
 }

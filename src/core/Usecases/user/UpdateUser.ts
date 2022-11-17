@@ -3,7 +3,7 @@ import {User} from "../../Entities/User";
 import {UserRepository} from "../../repositories/UserRepository";
 import {PasswordGateway} from "../../gateways/PasswordGateway";
 
-export type UserInput = {
+export type UserUpdatedInput = {
     userName: string,
     connexionType: string,
     email: string,
@@ -13,23 +13,24 @@ export type UserInput = {
     userId: string
 }
 
-export class UpdateUser implements UseCase<UserInput, User> {
+export class UpdateUser implements UseCase<UserUpdatedInput, User> {
 
     constructor(private readonly userRepository: UserRepository,
                 private readonly passwordGateway: PasswordGateway) {
     }
 
-    execute(input: UserInput): User {
-        const user = this.userRepository.getById(input.userId);
-        user.update({
+    async execute(input: UserUpdatedInput): Promise<User> {
+
+        const user = await this.userRepository.update({
+            userId: input.userId,
             userName: input.userName,
             connexionType: input.connexionType,
             email: input.email,
             password: this.passwordGateway.encrypt(input.password),
             picture: input.picture,
             updated: input.updated
-        })
-        this.userRepository.save(user);
-        return user;
+        });
+
+        return Promise.resolve(user);
     }
 }

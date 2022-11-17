@@ -14,8 +14,8 @@ export class SignIn implements UseCase<UserInput, User> {
                 private readonly passwordGateway: PasswordGateway) {
     }
 
-    execute(input: UserInput): User {
-        const userExists = this.userRepository.getByEmail(input.email.toLowerCase().trim());
+    async execute(input: UserInput): Promise<User> {
+        const userExists =await this.userRepository.getByEmail(input.email.toLowerCase().trim());
         if (!userExists) {
             throw new Error('user not found')
         }

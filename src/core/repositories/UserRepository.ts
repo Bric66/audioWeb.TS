@@ -1,9 +1,13 @@
 import {User} from "../Entities/User";
+import {UserUpdatedInput} from "../Usecases/user/UpdateUser";
 
 export interface UserRepository {
-    save(user: User): void;
+    create(user: User): Promise<User>;
 
-    getByEmail(email: string): User;
+    getByEmail(email: string): Promise<User>;
 
-    getById(id: string): User;
+    getById(id: string): Promise<User>;
+
+    update(userInput: UserUpdatedInput): Promise<User>;
+
 }

@@ -5,7 +5,7 @@ import {PasswordGateway} from "../../gateways/PasswordGateway";
 import {Organisation} from "../../Entities/Organisation";
 import {OrganisationRepository} from "../../repositories/OrganisationRepository";
 
-export type UserInput = {
+export type OrganisationUpdatedInput = {
     name: string;
     statut: string;
     raisonSociale: string;
@@ -17,19 +17,17 @@ export type UserInput = {
     tva: string;
     emoji: string;
     userId: string;
+    updated: Date;
 }
 
-export class UpdateOrganisation implements UseCase<UserInput, Organisation> {
+export class UpdateOrganisation implements UseCase<OrganisationUpdatedInput, Organisation> {
 
     constructor(private readonly organisationRepository: OrganisationRepository) {
     }
 
-    execute(input: UserInput): Organisation {
-        const organisation = this.organisationRepository.getByUserId(input.userId)
-        if (!organisation) {
-            throw new Error("organisation doesn't exist")
-        }
-        organisation.update({
+    async execute(input: OrganisationUpdatedInput): Promise<Organisation> {
+
+        const organisation = await this.organisationRepository.update({
             name: input.name,
             statut: input.statut,
             raisonSociale: input.raisonSociale,
@@ -40,8 +38,9 @@ export class UpdateOrganisation implements UseCase<UserInput, Organisation> {
             country: input.country,
             tva: input.tva,
             emoji: input.emoji,
-        })
-        this.organisationRepository.save(organisation);
-        return organisation;
+            userId: input.userId,
+            updated: input.updated
+        });
+        return Promise.resolve(organisation);
     }
 }

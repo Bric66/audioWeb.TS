@@ -12,8 +12,9 @@ const signUp = new SignUp(inMemoryUserRepository, v4IdGateway, bcryptGateway);
 
 
 describe('Unit - SignUp', () => {
-    it('should create a user', () => {
-        const result = signUp.execute({
+
+    it('should create a user', async () => {
+        const result = await signUp.execute({
             userName: "bibi",
             connexionType: "email",
             email: "bibi@mail.com",
@@ -31,30 +32,31 @@ describe('Unit - SignUp', () => {
         expect(result.props.organisation).toEqual([]);
     })
 
-    it("should throw user already exists", () => {
+    it("should throw user already exists", async () => {
+        const email = "zzzzzz"
         const user = new User({
             id: v4IdGateway.generate(),
             userName: "jojo",
             connexionType: "email",
-            email: "jojo@mail.com",
+            email: email,
             password: bcryptGateway.encrypt("jojo"),
             created: null,
             updated: null,
             picture: "",
             organisation: []
         })
-        inMemoryUserRepository.save(user)
+        await inMemoryUserRepository.create(user)
 
-        const result = () => signUp.execute({
+        const result = signUp.execute({
             userName: "jojo",
             connexionType: "email",
-            email: "jojo@mail.com",
+            email: email,
             password: "jojo",
             picture: "",
         });
-        expect(() => {
-            result()
-        }).toThrow();
+
+        await expect(result).rejects.toThrowError(new Error('user already exists'))
+
     });
 });
 

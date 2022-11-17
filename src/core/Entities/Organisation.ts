@@ -71,6 +71,7 @@ export class Organisation {
         country: string;
         tva: string;
         emoji: string;
+        updated:Date;
     }) {
         this.props.name = props.name
         this.props.statut = props.statut
@@ -81,14 +82,34 @@ export class Organisation {
         this.props.bp = props.bp
         this.props.country = props.country
         this.props.tva = props.tva
-        this.props.updated = new Date()
         this.props.emoji = props.emoji
+        this.props.updated= props.updated
     }
 
-    /*(props:{
-        invite: string
-    }){
-        this.props.invite = props.invite
-    }
-*/
+//     SendInvitation(props: {
+//         userId: string;
+//         email: string;
+//         name: string;
+//     }) {
+//
+//         const invitationAlreadySent = this.props.invite.find(item => item.props.email === props.email);
+//         if (invitationAlreadySent) {
+//             throw new Error('mail already sent')
+//         }
+//
+//         this.props.invite.push({
+//             name: props.name,
+//             email: props.email,
+//             date: new Date()
+//         });
+// // this.organisationRepository.save(organisation);
+// // await this.mailGateway.SendInvitation(input.email, organisation.props.name);
+// //
+//         return organisation/*(props:{
+//         invite: string
+//     }){
+//         this.props.invite = props.invite
+//     }
+// */
+//     }
 }

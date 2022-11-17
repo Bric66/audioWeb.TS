@@ -5,23 +5,19 @@ const organisationRouter = express.Router();
 import {CreateOrganisation} from "../../core/Usecases/organisation/CreateOrganisation";
 import {V4IdGateway} from "../../adapters/gateways/V4IdGateway";
 import {AuthentifiedRequest} from "../types/AuthentifiedRequest";
-import {InMemoryUserRepository} from "../../adapters/repositories/InMemoryUserRepository";
-import {
-    dbOrganisation,
-    InMemoryOrganisationRepository
-} from "../../adapters/repositories/InMemoryOrganisationRepository";
 import {UpdateOrganisation} from "../../core/Usecases/organisation/UpdateOrganisation";
 import {SendInvitation} from "../../core/Usecases/organisation/SendInvitation";
 import {NodeMailerGateway} from "../../adapters/gateways/NodeMailerGateway";
+import {MongoDbOrganisationRepository} from "../../adapters/repositories/mongoDb/MongoDbOrganisationRepository";
 
+const mongoDbOrganisationRepository = new MongoDbOrganisationRepository();
 const V4idGateway = new V4IdGateway();
 const nodeMailerGateway = new NodeMailerGateway();
-const inMemoryOrganisationRepository = new InMemoryOrganisationRepository();
-const createOrganisation = new CreateOrganisation(inMemoryOrganisationRepository, V4idGateway);
-const updateOrganisation = new UpdateOrganisation(inMemoryOrganisationRepository)
-const sendInvitation = new SendInvitation(inMemoryOrganisationRepository, nodeMailerGateway)
+const createOrganisation = new CreateOrganisation(mongoDbOrganisationRepository, V4idGateway);
+const updateOrganisation = new UpdateOrganisation(mongoDbOrganisationRepository)
+const sendInvitation = new SendInvitation(mongoDbOrganisationRepository, nodeMailerGateway)
 
-organisationRouter.post("/", (req: AuthentifiedRequest, res) => {
+organisationRouter.post("/",async (req: AuthentifiedRequest, res) => {
     try {
         const body = {
             name: req.body.name,
@@ -35,7 +31,7 @@ organisationRouter.post("/", (req: AuthentifiedRequest, res) => {
             tva: req.body.tva,
             emoji: req.body.emoji,
         }
-        const organisation = createOrganisation.execute({
+        const organisation = await createOrganisation.execute({
             userId: req.user.id,
             name: body.name,
             statut: body.statut,
@@ -57,7 +53,7 @@ organisationRouter.post("/", (req: AuthentifiedRequest, res) => {
 });
 
 
-organisationRouter.patch("/", (req: AuthentifiedRequest, res) => {
+organisationRouter.patch("/", async (req: AuthentifiedRequest, res) => {
     try {
         const body = {
             name: req.body.name,
@@ -71,7 +67,7 @@ organisationRouter.patch("/", (req: AuthentifiedRequest, res) => {
             tva: req.body.tva,
             emoji: req.body.emoji,
         }
-        const organisation = updateOrganisation.execute({
+        const organisation = await updateOrganisation.execute({
             name: body.name,
             statut: body.statut,
             raisonSociale: body.raisonSociale,
@@ -82,9 +78,10 @@ organisationRouter.patch("/", (req: AuthentifiedRequest, res) => {
             country: body.country,
             tva: body.tva,
             emoji: body.emoji,
-            userId: req.user.id
+            userId: req.user.id,
+            updated: new Date()
         })
-        return res.status(200).send(organisation.props);
+        return res.status(200).send(organisation);
     } catch (err) {
         return res.status(400).send({
             message: err.message,
@@ -101,7 +98,8 @@ organisationRouter.post("/sendInvitation", async (req: AuthentifiedRequest, res)
         await sendInvitation.execute({
             email: body.email,
             name: body.name,
-            userId: req.user.id
+            userId: req.user.id,
+            date: new Date()
         })
 
         return res.status(200).send({

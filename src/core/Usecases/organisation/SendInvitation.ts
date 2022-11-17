@@ -8,6 +8,7 @@ export type InviteInput = {
     userId: string;
     email: string;
     name: string;
+    date: Date
 }
 
 export class SendInvitation implements UseCase<InviteInput, Promise<Organisation>> {
@@ -17,20 +18,20 @@ export class SendInvitation implements UseCase<InviteInput, Promise<Organisation
     }
 
     async execute(input: InviteInput): Promise<Organisation> {
-        const organisation = this.organisationRepository.getByUserId(input.userId);
-        const invitationAlreadySent = this.organisationRepository.invitationExists(input.userId, input.email);
-        if (invitationAlreadySent) {
-            throw new Error('mail already sent')
-        }
-            organisation.props.invite.push({
+        const organisation = await this.organisationRepository.getByUserId(input.userId);
+
+        await this.mailGateway.SendInvitation(input.email, organisation.props.name);
+
+        const invitationAlreadySent = await this.organisationRepository.invitationExists(input.userId, input.email);
+        if (!invitationAlreadySent) {
+            await this.organisationRepository.updateInvitationsSent({
+                userId: input.userId,
                 name: input.name,
                 email: input.email,
                 date: new Date()
-            });
-            this.organisationRepository.save(organisation);
-        await this.mailGateway.SendInvitation(input.email, organisation.props.name);
-
-        return organisation
+            })
+        }
+        return Promise.resolve(organisation);
     }
 
 }
